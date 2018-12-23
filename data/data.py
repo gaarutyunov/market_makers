@@ -19,3 +19,4 @@ sec_file = sec_file.dropna()\
 column = sec_file.columns[1]
 
 market_makers_merged = pd.merge(market_makers, sec_file, how='inner', on=column).drop(columns=['index'])
+

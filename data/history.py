@@ -16,6 +16,8 @@ sec_file = sec_file.dropna()\
     .drop(columns=['index'])\
     .drop(columns=[sec_file.columns[0]])\
     .reset_index()
+sec_file = sec_file.replace({'ppif': 'shares', 'etf': 'shares', 'dr': 'shares'})
+
 length = len(sec_file)
 
 
