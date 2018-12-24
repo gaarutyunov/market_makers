@@ -3,8 +3,10 @@ import os
 import requests
 from concurrent.futures import ThreadPoolExecutor
 from timeit import default_timer
-from main import API, DATE
+from main import API, DATE, OUTPUT
 import csv
+import io
+import pandas as pd
 
 START_TIME = default_timer()
 
@@ -20,7 +22,7 @@ def fetch(session, sec):
     with session.get(url) as response:
         if response.status_code != 200:
             print("FAILURE::{0}".format(url))
-        data = response.text
+        data = response.content
         elapsed = default_timer() - START_TIME
         time_completed_at = "{:5.2f}s".format(elapsed)
         print("{0:<30} {1:>20}".format(str(code) + '.csv', time_completed_at))
@@ -41,13 +43,10 @@ async def get_data_asynchronous(path, df):
                     fetch,
                     *(session, df.iloc[i, :])
                 )
-                for i in range(0, length)
+                for i in range(0, len(df))
             ]
             for response in await asyncio.gather(*tasks):
                 key = list(response.keys())[0]
                 value = response.get(key)
-                with open(os.path.join(path, key + '.csv'), 'w', encoding='utf-8') as f:
-                    writer = csv.writer(f)
-                    reader = csv.reader(value.splitlines())
-                    for row in reader:
-                        writer.writerow(row)
+                rawData = pd.read_csv(io.StringIO(value.decode('windows 1251')), sep=';', skiprows=1)
+                rawData.to_csv(os.path.join(path, key + '.csv'))
