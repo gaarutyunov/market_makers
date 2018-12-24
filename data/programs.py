@@ -1,13 +1,16 @@
-from main import INPUT, OUTPUT
-import pandas as pd
+from main import OUTPUT
 import os
+import pandas as pd
+from helpers.programs import get_volumes
+from helpers.utils import create_plot
 
-bb_bo_df = pd.read_csv(os.path.join(INPUT, 'bb-bo.csv'), encoding='windows 1251', sep=';')
-code = bb_bo_df.iloc[:, 0]
-dates = pd.read_csv(os.path.join(OUTPUT, 'history', 'AFLT.csv'), sep=',')
-dates1 = dates.iloc[0]
-# dates = dates.iloc[:, 1]
-# new_df = pd.DataFrame(['code', ])
+get_volumes('bb-bo')
 
-# for cd in code:
-#     csv = pd.read_csv(os.path.join(OUTPUT, 'history', cd))
+programs_path = os.path.join(OUTPUT, 'programs')
+
+df = pd.read_csv(os.path.join(programs_path, 'bb-bo.csv'))
+df = df.set_index(df.columns[0])
+df = df.drop(columns=['VTBR'])
+
+
+create_plot(df, 'Программа Best Bid/Best Offer')
