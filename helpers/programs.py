@@ -5,7 +5,7 @@ import os
 
 def get_volumes(program):
     bb_bo_df = pd.read_csv(os.path.join(INPUT, program + '.csv'), encoding='windows 1251', sep=';')
-    codes = bb_bo_df['Торговый код ценной бумаги']
+    codes = bb_bo_df.iloc[:, 0]
     codes = list(codes)
     ex_d = pd.read_csv(os.path.join(OUTPUT, 'history', 'AFLT.csv'), sep=',')
     ex_d_1 = list(ex_d['TRADEDATE'])

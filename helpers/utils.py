@@ -33,18 +33,18 @@ def create_pie(dt_f):
     plt.savefig(os.path.join(GRAPH_PATH, title + '.png'))
 
 
-def create_plot(dt_f, title):
-    df = dt_f.divide(1000)
+def create_plot(dt_f, title, div):
+    df = dt_f.divide(div)
     indexes = df.index.values[::5]
-    ax = df.plot(figsize=(14, 10))
+    ax = df.plot(figsize=(18, 12))
     plt.xlabel('Дата', fontsize=12)
     start_x, end_x = ax.get_ylim()
-    ax.yaxis.set_ticks(np.arange(0, end_x, 1000))
+    ax.yaxis.set_ticks(np.arange(0, end_x, div if div == 1000 else div / 1000))
     start_y, end_y = ax.get_xlim()
     plt.xticks(list(range(len(indexes))), indexes)
     ax.xaxis.set_ticks(np.arange(0, end_y, 5))
     plt.yticks(fontsize=12)
-    plt.ylabel('Объем, тыс шт. ценных бумаг', fontsize=12)
+    plt.ylabel('Объем, тыс шт. ценных бумаг' if div == 1000 else 'Объем, млн шт. ценных бумаг', fontsize=12)
     ax.set_title(title)
     title = title.replace(' ', '_').replace('/', '_')
     plt.savefig(os.path.join(GRAPH_PATH, title + '.png'))

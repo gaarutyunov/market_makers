@@ -1,5 +1,5 @@
 import pandas as pd
-from main import MAIN
+from main import MAIN, OUTPUT
 import os
 my_file = os.path.join(MAIN, 'input', 'market_makers.xls')
 market_makers = pd.read_excel(my_file)
@@ -19,4 +19,5 @@ sec_file = sec_file.dropna()\
 column = sec_file.columns[1]
 
 market_makers_merged = pd.merge(market_makers, sec_file, how='inner', on=column).drop(columns=['index'])
+market_makers_merged.to_csv(os.path.join(OUTPUT, 'market_makers_merged.csv'))
 
