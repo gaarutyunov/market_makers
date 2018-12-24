@@ -6,6 +6,7 @@ from timeit import default_timer
 from main import API, DATE, OUTPUT, INPUT
 import pandas as pd
 import numpy as np
+from helpers.get_data import get_data, get_code
 START_TIME = default_timer()
 
 
@@ -16,6 +17,8 @@ def get_percent(value_b, value_s):
 
 
 def get_dates(name):
+    data = get_data(name)
+    name = get_code(data)
     df = pd.read_csv(os.path.join(OUTPUT, 'history', name + '.csv'))
     new_df = df[['TRADEDATE', 'VOLUME']]
     new_df = new_df.set_index(new_df.columns[0])
@@ -24,6 +27,8 @@ def get_dates(name):
 
 def fetch(session, program, name):
     dates_df = get_dates(name)
+    data = get_data(name)
+    name = get_code(data)
     new_df = pd.DataFrame(columns=['VOLUME_MM'], index=dates_df.index)
     for date in dates_df.index.values:
         url = API\
