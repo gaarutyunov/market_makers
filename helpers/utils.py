@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from main import MAIN
+from main import MAIN, GRAPH_PATH
 import os
-GRAPH_PATH = os.path.join(MAIN, 'graphs')
 
 
 def group(df, rename=True):

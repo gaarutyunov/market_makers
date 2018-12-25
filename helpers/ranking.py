@@ -3,10 +3,12 @@ import os
 import requests
 from concurrent.futures import ThreadPoolExecutor
 from timeit import default_timer
-from main import API, DATE, OUTPUT, INPUT
+from main import API, DATE, OUTPUT, INPUT, STAT, GRAPH_PATH
 import pandas as pd
 import numpy as np
 from helpers.get_data import get_data, get_code
+import matplotlib.pyplot as plt
+
 START_TIME = default_timer()
 
 
@@ -75,3 +77,43 @@ async def get_data_asynchronous(program):
                 key = list(response.keys())[0]
                 response = response.get(key)
                 response.to_csv(os.path.join(OUTPUT, 'statistics', program, key + '.csv'))
+
+
+def extract_mean(program, name):
+    data = get_data(name)
+    name = get_code(data)
+    path = os.path.join(STAT, program, name + '.csv')
+    df = pd.read_csv(path)
+    percent = df.iloc[:, -1]
+    percentage = percent.mean()
+    return percentage
+
+
+def create_df(program):
+    path = os.path.join(INPUT, program + '.csv')
+    df = pd.read_csv(path, encoding='windows 1251', sep=';')
+    names = list(df.iloc[:, 0])
+    new_df = pd.DataFrame(index=names, columns=['Средний процент'])
+    for name in names:
+        percent = extract_mean(program, name)
+        new_df.loc[name] = percent
+    return new_df
+
+
+def save_data(program):
+    path = os.path.join(STAT, program)
+    df = create_df(program)
+    decimals = 2
+    df['Средний процент'] = df['Средний процент'].apply(lambda x: round(x, decimals))
+    df.to_csv(os.path.join(path, 'mean.csv'))
+
+
+def create_graph(program):
+    path = os.path.join(STAT, program)
+    df = pd.read_csv(os.path.join(path, 'mean.csv'))
+    df = df.set_index(df.columns[0])
+    ax = df.plot(kind='bar', figsize=(12, 10))
+    plt.xlabel('Ценная бумага')
+    plt.ylabel('Процент')
+    ax.set_title('Процент сделок Маркет-мейкеров')
+    plt.savefig(os.path.join(GRAPH_PATH, program + '.png'))
