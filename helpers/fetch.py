@@ -19,6 +19,7 @@ def fetch(session, sec):
     url = API + 'history/' + 'engines/' + engine + \
         '/markets/' + market + '/boards/' + board + \
         '/securities/' + str(code) + '.csv' + '?from=' + DATE
+    print(url)
     with session.get(url) as response:
         if response.status_code != 200:
             print("FAILURE::{0}".format(url))
